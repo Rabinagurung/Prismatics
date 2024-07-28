@@ -1,9 +1,9 @@
 import { Pressable, View } from 'react-native';
 
-export default function Button() {
+export default function Button({ title }) {
   return (
     <View>
-      <Pressable></Pressable>
+      <Button title={title}></Button>
     </View>
   );
 }

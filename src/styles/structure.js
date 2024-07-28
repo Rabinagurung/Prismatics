@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { MD3LightTheme as DefaultTheme } from 'react-native-paper';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,7 +19,22 @@ export const GlobalStyles = {
     dodgerBlue: '#007AFF', // Used in cancel button for Search
     black: '#000000',
     offWhite: '#EFEFF0', // Used in filter in search screen
+    lightGray: '#BFBFC1',
     darkGray: '#5F6368', // Used in icon in detail screen
   },
 };
+
 export default styles;
+
+export const paperTheme = {
+  ...DefaultTheme,
+  // Specify custom property
+  myOwnProperty: true,
+  // Specify custom property in nested object
+  colors: {
+    ...DefaultTheme.colors,
+    primary: GlobalStyles.colors.slateBlue,
+    ...GlobalStyles.colors,
+    outline: GlobalStyles.colors.lightGray,
+  },
+};

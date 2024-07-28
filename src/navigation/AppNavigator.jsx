@@ -16,7 +16,7 @@ export default function AppNavigator() {
   const user = useAuthentication();
   return (
     <NavigationContainer theme={theme}>
-      {user ? <MainNavigator /> : <AuthNavigator />}
+      {user ? <AuthNavigator /> : <MainNavigator />}
     </NavigationContainer>
   );
 }

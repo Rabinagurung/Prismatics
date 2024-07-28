@@ -15,7 +15,6 @@ import {
 import { Text } from 'react-native';
 
 /** Bottom Nav */
-
 const PrismaticsOverView = () => {
   const Tab = createBottomTabNavigator();
   return (
@@ -41,7 +40,7 @@ const PrismaticsOverView = () => {
           name="Home"
           component={HomeScreen}
           options={{
-            header: () => <Header />,
+            header: Header,
             tabBarIcon: ({ focused, color, size }) => {
               const name = focused ? 'home' : 'home-outline';
               return (
