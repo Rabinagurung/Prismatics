@@ -21,7 +21,7 @@ export default function DetailScreen({route}) {
       return;
     }
 
-    const image_URL = item.thumbs.original;
+    const image_URL = item.uri;
     console.log(item.thumbs);
     const fileUri = FileSystem.documentDirectory + 'downloadedImage.jpg';
 
@@ -59,7 +59,7 @@ export default function DetailScreen({route}) {
         activeOpacity={1} 
       >
         <Image 
-          source={{uri:item.thumbs.original}} 
+          source={{uri:item.uri}} 
           style={styles.image}
           resizeMode="contain">
         </Image>
