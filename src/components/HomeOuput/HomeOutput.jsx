@@ -2,11 +2,11 @@ import { StyleSheet, View, Text } from 'react-native';
 import SearchBar from './SearchBar';
 import WallpaperList from './WallpaperList';
 
-export default function HomeOutput() {
+export default function HomeOutput({navigation}) {
   return (
       <View style={styles.container}>
-        {/* <SearchBar /> */}
-        <WallpaperList />
+        <SearchBar />
+        <WallpaperList navigation={navigation} />
       </View>
   );
 }
