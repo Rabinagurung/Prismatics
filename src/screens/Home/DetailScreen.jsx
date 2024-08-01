@@ -2,6 +2,7 @@ import { StyleSheet, View, Text, Image, TouchableOpacity, Alert } from 'react-na
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import React, { useEffect, useState } from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function DetailScreen({route}) {
   const [showToolbar, setshowToolbar] = useState(false);
@@ -21,8 +22,8 @@ export default function DetailScreen({route}) {
       return;
     }
 
-    const image_URL = item.uri;
-    console.log(item.thumbs);
+    const image_URL = item.large;
+    console.log(image_URL);
     const fileUri = FileSystem.documentDirectory + 'downloadedImage.jpg';
 
     const downloadResumable = FileSystem.createDownloadResumable(
@@ -42,7 +43,7 @@ export default function DetailScreen({route}) {
       // Save the image to the media library
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.createAlbumAsync('Download', asset, false);
-      Alert.alert('Success', 'Image Downloaded and Saved to Photos.');
+      Alert.alert('Success', 'Image Downloaded and Saved to Photos. You can set it as wallpaper now.');
     } catch (e) {
       Alert.alert('Error', 'Image Download Failed.');
       console.error(e);
@@ -59,7 +60,7 @@ export default function DetailScreen({route}) {
         activeOpacity={1} 
       >
         <Image 
-          source={{uri:item.uri}} 
+          source={{uri:item.large}} 
           style={styles.image}
           resizeMode="contain">
         </Image>
@@ -67,10 +68,9 @@ export default function DetailScreen({route}) {
       {showToolbar && (
             <View style={styles.toolbar}>
               <TouchableOpacity onPress={downloadImage}>
-                <Text>Download</Text>
+              <Icon name="download" size={30} color="#fff" />
               </TouchableOpacity>
-              <Text>favorite</Text>
-              <Text>{downloadProgress}</Text>
+              <Icon name="heart" size={30} color="#fff" />
             </View>
       )}
     </View>

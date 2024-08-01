@@ -1,8 +1,10 @@
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import MasonryList from 'react-native-masonry-list';
+import Loading from '../UI/LoadingView';
 
 const WallpaperList = ({ navigation }) => {
+  const isLoadingNext = false;
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,6 +22,7 @@ const WallpaperList = ({ navigation }) => {
       const data = await response.json();
       const formattedData = data.data.map(item => ({
         uri: item.thumbs.small,
+        large: item.thumbs.large,
         id: item.id,
       }));
 
@@ -46,6 +49,12 @@ const WallpaperList = ({ navigation }) => {
           setCurrentPage(currentPage + 1);
           fetchData();
         }}
+        refreshing={isLoadingNext}
+        onRefresh={() => {
+          setCurrentPage(1);
+          setData([]);
+          fetchData();
+        }}
       />
     </View>
   );
@@ -56,11 +65,11 @@ export default WallpaperList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: 'white',
   },
   listContainer: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: 'white',
   },
   imageContainer: {
     margin: 5,
