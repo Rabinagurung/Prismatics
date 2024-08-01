@@ -1,12 +1,15 @@
-import { StyleSheet, View, Text, Image, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+import * as database from '../../database';
 import React, { useEffect, useState } from 'react';
+import { GlobalStyles } from '../../styles/structure';
 
-export default function DetailScreen({route}) {
+export default function DetailScreen({ route }) {
   const [showToolbar, setshowToolbar] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadedImageUri, setDownloadedImageUri] = useState(null);
+  const [savingData, setSavingData] = useState(false);
   const { item } = route.params;
 
   const requestPermission = async () => {
@@ -49,29 +52,55 @@ export default function DetailScreen({route}) {
     }
   };
 
+  const favouriteImage = async () => {
+    const image_URL = item.uri;
+    const data = {
+      image_URL
+    }
+
+    setSavingData(true);
+    const id = await database.save(data);
+    setSavingData(false);
+
+    Alert.alert('Success', 'Image added to your favourites!')
+  }
+
+  if (savingData) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size='large' color={GlobalStyles.colors.dodgerBlue} />
+        <Text style={styles.loadingText}>Saving data!</Text>
+        <Text style={styles.loadingText}>Please, wait...</Text>
+      </View>
+    );
+  }
+
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.imageContainer} 
+      <TouchableOpacity
+        style={styles.imageContainer}
         onPress={() => {
-        setshowToolbar(!showToolbar);
+          setshowToolbar(!showToolbar);
         }}
-        activeOpacity={1} 
+        activeOpacity={1}
       >
-        <Image 
-          source={{uri:item.uri}} 
+        <Image
+          source={{ uri: item.uri }}
           style={styles.image}
           resizeMode="contain">
         </Image>
       </TouchableOpacity>
       {showToolbar && (
-            <View style={styles.toolbar}>
-              <TouchableOpacity onPress={downloadImage}>
-                <Text>Download</Text>
-              </TouchableOpacity>
-              <Text>favorite</Text>
-              <Text>{downloadProgress}</Text>
-            </View>
+        <View style={styles.toolbar}>
+          <TouchableOpacity onPress={downloadImage}>
+            <Text>Download</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={favouriteImage}>
+            <Text>Favourite</Text>
+          </TouchableOpacity>
+          <Text>{downloadProgress}</Text>
+        </View>
       )}
     </View>
   );
