@@ -3,12 +3,11 @@ import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import * as database from '../../database';
 import React, { useEffect, useState } from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { GlobalStyles } from '../../styles/structure';
 
 export default function DetailScreen({ route }) {
   const [showToolbar, setshowToolbar] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState(0);
-  const [downloadedImageUri, setDownloadedImageUri] = useState(null);
   const [savingData, setSavingData] = useState(false);
   const { item } = route.params;
 
@@ -24,8 +23,8 @@ export default function DetailScreen({ route }) {
       return;
     }
 
-    const image_URL = item.uri;
-    console.log(item.thumbs);
+    const image_URL = item.large;
+    console.log(image_URL);
     const fileUri = FileSystem.documentDirectory + 'downloadedImage.jpg';
 
     const downloadResumable = FileSystem.createDownloadResumable(
@@ -45,7 +44,7 @@ export default function DetailScreen({ route }) {
       // Save the image to the media library
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.createAlbumAsync('Download', asset, false);
-      Alert.alert('Success', 'Image Downloaded and Saved to Photos.');
+      Alert.alert('Success', 'Image Downloaded and Saved to Photos. You can set it as wallpaper now.');
     } catch (e) {
       Alert.alert('Error', 'Image Download Failed.');
       console.error(e);
@@ -85,22 +84,21 @@ export default function DetailScreen({ route }) {
         }}
         activeOpacity={1}
       >
-        <Image
-          source={{ uri: item.uri }}
+        <Image 
+          source={{uri:item.large}} 
           style={styles.image}
           resizeMode="contain">
         </Image>
       </TouchableOpacity>
       {showToolbar && (
-        <View style={styles.toolbar}>
-          <TouchableOpacity onPress={downloadImage}>
-            <Text>Download</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={favouriteImage}>
-            <Text>Favourite</Text>
-          </TouchableOpacity>
-          <Text>{downloadProgress}</Text>
-        </View>
+            <View style={styles.toolbar}>
+              <TouchableOpacity onPress={downloadImage}>
+              <Icon name="download" size={30} color="#fff" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={favouriteImage}>
+              <Icon name="heart" size={30} color="#fff" />
+              </TouchableOpacity>
+            </View>
       )}
     </View>
   );
