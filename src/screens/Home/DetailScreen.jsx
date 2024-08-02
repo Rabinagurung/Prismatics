@@ -5,6 +5,7 @@ import * as database from '../../database';
 import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { GlobalStyles } from '../../styles/structure';
+import Loading from '../../components/UI/LoadingView';
 
 export default function DetailScreen({ route }) {
   const [showToolbar, setshowToolbar] = useState(false);
@@ -52,9 +53,11 @@ export default function DetailScreen({ route }) {
   };
 
   const favouriteImage = async () => {
-    const image_URL = item.uri;
+    const image_URL_large = item.large;
+    const image_URL_small = item.uri
     const data = {
-      image_URL
+      image_URL_large,
+      image_URL_small
     }
 
     setSavingData(true);
@@ -66,10 +69,8 @@ export default function DetailScreen({ route }) {
 
   if (savingData) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size='large' color={GlobalStyles.colors.dodgerBlue} />
-        <Text style={styles.loadingText}>Saving data!</Text>
-        <Text style={styles.loadingText}>Please, wait...</Text>
+      <View style={styles.imageContainer}>
+        <Loading />
       </View>
     );
   }
@@ -84,21 +85,21 @@ export default function DetailScreen({ route }) {
         }}
         activeOpacity={1}
       >
-        <Image 
-          source={{uri:item.large}} 
+        <Image
+          source={{ uri: item.large }}
           style={styles.image}
           resizeMode="contain">
         </Image>
       </TouchableOpacity>
       {showToolbar && (
-            <View style={styles.toolbar}>
-              <TouchableOpacity onPress={downloadImage}>
-              <Icon name="download" size={30} color="#fff" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={favouriteImage}>
-              <Icon name="heart" size={30} color="#fff" />
-              </TouchableOpacity>
-            </View>
+        <View style={styles.toolbar}>
+          <TouchableOpacity onPress={downloadImage}>
+            <Icon name="download" size={30} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={favouriteImage}>
+            <Icon name="heart" size={30} color="#fff" />
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
