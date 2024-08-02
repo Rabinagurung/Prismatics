@@ -2,45 +2,49 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import * as database from '../../database';
 import MasonryList from 'react-native-masonry-list';
+import Loading from '../../components/UI/LoadingView';
 
 export default function FavoriteScreen({ navigation }) {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     (async () => {
       try {
         //Load the database here
         const loadedData = await database.load();
-        console.log("Loaded Data:", loadedData); // Debug: Log the loaded data
         const formattedData = loadedData.map(item => ({
-          uri: item.image_URL,
+          uri: item.image_URL_small,
+          large: item.image_URL_large,
           id: item.id,
         }));
-        console.log("Formatted Data:", formattedData); // Debug: Log the formatted data
         setData(formattedData)
       } catch (error) {
-        console.error("Error loading data:", error); // Debug: Log any error
         Alert.alert('Error', 'There was an error loading the favourites page. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
 
   const handleItemPress = (item) => {
-    console.log("Item pressed:", item); // Debug: Log the pressed item
     navigation.navigate('DetailScreen', { item });
   };
 
   return (
     <View style={styles.container}>
-      {data.length > 0 ? (
+      {loading === true ? (
+        <View style={{ alignContent: 'center', alignItems: 'center', flex: 1 }}>
+          <Loading/>
+        </View>
+      ) : (
         <MasonryList
           images={data}
           onPressImage={handleItemPress}
           columns={2}
           style={styles.listContainer}
         />
-      ) : (
-        <Text>Loading...</Text>
       )}
     </View>
   );
@@ -49,11 +53,9 @@ export default function FavoriteScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'red',
   },
   listContainer: {
     flex: 1,
-    backgroundColor: 'red',
   },
   imageContainer: {
     margin: 5,
