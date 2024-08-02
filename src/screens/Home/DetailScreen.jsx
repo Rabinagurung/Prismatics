@@ -3,6 +3,7 @@ import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import * as database from '../../database';
 import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { GlobalStyles } from '../../styles/structure';
 import Loading from '../../components/UI/LoadingView';
@@ -10,7 +11,28 @@ import Loading from '../../components/UI/LoadingView';
 export default function DetailScreen({ route }) {
   const [showToolbar, setshowToolbar] = useState(false);
   const [savingData, setSavingData] = useState(false);
+  const [isFavourited, setIsFavourited] = useState(false);
   const { item } = route.params;
+
+  //Load favourites when the component is focused or item.id changes
+  useEffect(() => {
+    (async () => {
+      const favourites = await database.load();
+      const isFav = favourites.some(fav => fav.id_API === item.id);
+      setIsFavourited(isFav);
+    })()
+  }, [item.id])
+
+  //Load favourites when the screen is in focus or item.id changes
+  useFocusEffect(
+    React.useCallback(() => {
+      (async () => {
+        const favourites = await database.load();
+        const isFav = favourites.some(fav => fav.id_API === item.id);
+        setIsFavourited(isFav);
+      })()
+    }, [item.id])
+  );
 
   const requestPermission = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -52,20 +74,35 @@ export default function DetailScreen({ route }) {
     }
   };
 
+  // When user clicked on the favourites button
   const favouriteImage = async () => {
-    const image_URL_large = item.large;
-    const image_URL_small = item.uri
-    const data = {
-      image_URL_large,
-      image_URL_small
-    }
-
     setSavingData(true);
-    const id = await database.save(data);
+    if (isFavourited) {
+      // Remove from favourites
+      const favourites = await database.load();
+      const favItem = favourites.find(fav => fav.id_API === item.id);
+      if (favItem) {
+        await database.remove(favItem.id);
+        setIsFavourited(false);
+        Alert.alert('Success', 'Image removed from your favourites!');
+      }
+    } else {
+      // Add to favourites
+      const data = {
+        id_API: item.id,
+        image_URL_large: item.large,
+        image_URL_small: item.uri,
+      };
+      const id = await database.save(data);
+      if (id) {
+        setIsFavourited(true);
+        Alert.alert('Success', 'Image added to your favourites!');
+      } else {
+        Alert.alert('Failed', 'Image did not get added to your favourites.');
+      }
+    }
     setSavingData(false);
-
-    Alert.alert('Success', 'Image added to your favourites!')
-  }
+  };
 
   if (savingData) {
     return (
@@ -97,7 +134,7 @@ export default function DetailScreen({ route }) {
             <Icon name="download" size={30} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity onPress={favouriteImage}>
-            <Icon name="heart" size={30} color="#fff" />
+            <Icon name="heart" size={30} color={isFavourited ? GlobalStyles.colors.dodgerBlue : "#fff"} />
           </TouchableOpacity>
         </View>
       )}
