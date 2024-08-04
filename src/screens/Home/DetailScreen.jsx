@@ -10,6 +10,8 @@ import Loading from '../../components/UI/LoadingView';
 
 export default function DetailScreen({ route }) {
   const [showToolbar, setshowToolbar] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadedImageUri, setDownloadedImageUri] = useState(null);
   const [savingData, setSavingData] = useState(false);
   const [isFavourited, setIsFavourited] = useState(false);
   const { item } = route.params;
@@ -47,7 +49,6 @@ export default function DetailScreen({ route }) {
     }
 
     const image_URL = item.large;
-    console.log(image_URL);
     const fileUri = FileSystem.documentDirectory + 'downloadedImage.jpg';
 
     const downloadResumable = FileSystem.createDownloadResumable(
@@ -63,7 +64,6 @@ export default function DetailScreen({ route }) {
     try {
       const { uri } = await downloadResumable.downloadAsync();
       setDownloadedImageUri(uri); // Save the URI to state
-
       // Save the image to the media library
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.createAlbumAsync('Download', asset, false);
