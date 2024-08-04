@@ -15,6 +15,8 @@ import { Snackbar } from 'react-native-paper';
 export default function DetailScreen({ route }) {
   const authCtx = useContext(AuthContext);
   const [showToolbar, setshowToolbar] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadedImageUri, setDownloadedImageUri] = useState(null);
   const [savingData, setSavingData] = useState(false);
   const [isFavourited, setIsFavourited] = useState(false);
 
@@ -61,16 +63,13 @@ export default function DetailScreen({ route }) {
         const progress = totalBytesWritten / totalBytesExpectedToWrite;
         //console.log(progress);
 
-        //setDownloadProgress(progress);
+        setDownloadProgress(progress);
       }
     );
 
     try {
       const { uri } = await downloadResumable.downloadAsync();
-
-      //console.log(uri);
-      //setDownloadedImageUri(uri); // Save the URI to state
-
+      setDownloadedImageUri(uri); // Save the URI to state
       // Save the image to the media library
       const asset = await MediaLibrary.createAssetAsync(uri);
 
