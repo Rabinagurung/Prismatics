@@ -5,11 +5,13 @@ import { AuthContext } from '../../store/auth-context';
 import { api } from '../../api/users';
 import { Avatar, Text } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
+import Loading from '../../components/UI/LoadingView';
 
 export default function ProfileScreen() {
   const [userName, setUserName] = useState('');
   const [numFav, setFav] = useState(0);
   const [numDownloads, setDownloads] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const authCtx = useContext(AuthContext);
 
@@ -21,23 +23,31 @@ export default function ProfileScreen() {
     useCallback(() => {
       (async () => {
         if (!userId) return;
-        const data = await api.getUser(userId);
+        try {
+          setIsLoading(true);
+          const data = await api.getUser(userId);
+          const fav = await api.getUserFavourites(userId);
 
-        //console.log(data);
+          const downloads = await api.getUserDownloads(userId);
 
-        const fav = await api.getUserFavourites(userId);
-
-        const downloads = await api.getUserDownloads(userId);
-
-        setUserName(data?.fields?.userName?.stringValue);
-        setFav(fav?.documents?.length || 0);
-        setDownloads(downloads?.documents?.length || 0);
+          setUserName(data?.fields?.userName?.stringValue);
+          setFav(fav?.documents?.length || 0);
+          setDownloads(downloads?.documents?.length || 0);
+        } catch (_) {
+        } finally {
+          setIsLoading(false);
+        }
       })();
     }, [userId])
   );
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <View style={styles.container}>
+      {/* {isLoading && <Loading style={{ flex: 1 }} />} */}
       <Avatar.Image
         size={100}
         source={require('../../../assets/giirlAvatar.png')}

@@ -3,7 +3,7 @@ import UserInput from '../../components/UI/UserInput';
 import { useContext, useState } from 'react';
 import ContainedButton from '../../components/UI/ContainedButton';
 import TextButton from '../../components/UI/TextButtton';
-import { createUser } from '../../utils/auth';
+import { signUpUser } from '../../utils/auth';
 import { AuthContext } from '../../store/auth-context';
 import { api } from '../../api/users';
 import * as z from 'zod';
@@ -58,10 +58,10 @@ export default function SignUpScreen({ navigation }) {
   //sign Up HANDLER WILL RECEIVE email and password
   async function signUpHandler({ name, email, password }) {
     try {
-      const { token, userId, refreshToken } = await createUser(email, password);
+      const { token, userId, refreshToken } = await signUpUser(email, password);
 
       authCtx.authenticate(token, userId, refreshToken);
-      await api.createUser(userId, name, email);
+      await api.signUpUser(userId, name, email);
     } catch (error) {
       Alert.alert('Sign up Failed', 'Try again later');
     }

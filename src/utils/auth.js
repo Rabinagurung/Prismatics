@@ -41,22 +41,12 @@ async function authenticate(mode, email, password) {
   }
 }
 
-export function createUser(email, password) {
-  //console.log(email, password);
-  try {
-    return authenticate('signUp', email, password);
-  } catch (error) {
-    console.warn(error);
-  }
+export function signUpUser(email, password) {
+  return authenticate('signUp', email, password);
 }
 
 export function loginUser(email, password) {
-  //console.log(email, password);
-  try {
-    return authenticate('signInWithPassword', email, password);
-  } catch (error) {
-    console.warn(error);
-  }
+  return authenticate('signInWithPassword', email, password);
 }
 
 export async function updateRefreshToken(refreshToken) {

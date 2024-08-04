@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Button } from 'react-native-paper';
-import AppLogo from '../UI/AppLogo';
 
 export default function UserLogin() {
   const [inputEmail, setEmail] = useState('');

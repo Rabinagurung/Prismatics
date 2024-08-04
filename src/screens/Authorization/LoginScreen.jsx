@@ -49,7 +49,7 @@ export default function LoginScreen({ navigation }) {
       const { token, userId, refreshToken } = await loginUser(email, password);
 
       authCtx.authenticate(token, userId, refreshToken);
-    } catch (error) {
+    } catch (_) {
       Alert.alert('Login Failed', 'Invalid email or password');
     }
   };

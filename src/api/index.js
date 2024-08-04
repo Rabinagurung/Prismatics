@@ -30,7 +30,7 @@ axios.interceptors.response.use(
     const originalRequest = error.config;
     // console.log('Before retry');
     if (error.response.status === 401 && !originalRequest._retry) {
-      console.log('Called here');
+      //console.log('Called here');
       originalRequest._retry = true;
       const refreshToken = await AsyncStorage.getItem('refreshToken'); // Function to get the current refresh token
       const newAccessToken = await updateRefreshToken(refreshToken); // Function to refresh the access token
