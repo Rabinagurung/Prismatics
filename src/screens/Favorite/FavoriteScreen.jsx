@@ -1,57 +1,62 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { View, StyleSheet, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import * as database from '../../database';
 import MasonryList from 'react-native-masonry-list';
 import Loading from '../../components/UI/LoadingView';
+import { api } from '../../api/users';
+import { AuthContext } from '../../store/auth-context';
 
 export default function FavoriteScreen({ navigation }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const authCtx = useContext(AuthContext);
 
-  //Load favourites list 
-  const fetchFavourites = async () => {
+  const userId = authCtx.userId;
+
+  //Add favourite list
+  const fetchFavourites = useCallback(async () => {
     setLoading(true);
     try {
-      const loadedData = await database.load();
-      const formattedData = loadedData.map(item => ({
-        uri: item.image_URL_small,
-        large: item.image_URL_large,
-        id: item.id_API,
-      }));
+      const loadedFavouritesData = await api.getUserFavourites(userId);
+
+      const formattedData = loadedFavouritesData.documents.map((item) => {
+        return {
+          id: item.fields.id_API.stringValue,
+          large: item.fields.image_URL_large.stringValue,
+          uri: item.fields.image_URL_small.stringValue,
+        };
+      });
+
       setData(formattedData);
-    } catch (error) {
-      Alert.alert('Error', 'There was an error loading the favourites page. Please try again later.');
+    } catch (_) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   //Load favourites list whenever the screen is in focus
   useFocusEffect(
     React.useCallback(() => {
       fetchFavourites();
-    }, [])
+    }, [fetchFavourites])
   );
 
   const handleItemPress = (item) => {
+    //console.log('Items from Favourite screen to Detail Screen: ', item);
     navigation.navigate('DetailScreen', { item });
   };
 
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <View style={styles.container}>
-      {loading === true ? (
-        <View style={{ alignContent: 'center', alignItems: 'center', flex: 1 }}>
-          <Loading />
-        </View>
-      ) : (
-        <MasonryList
-          images={data}
-          onPressImage={handleItemPress}
-          columns={2}
-          style={styles.listContainer}
-        />
-      )}
+      <MasonryList
+        images={data}
+        onPressImage={handleItemPress}
+        columns={2}
+        style={styles.listContainer}
+      />
     </View>
   );
 }

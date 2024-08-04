@@ -5,7 +5,6 @@ import FavoriteScreen from '../screens/Favorite/FavoriteScreen';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
 import SearchScreen from '../screens/Home/SearchScreen';
 import DetailScreen from '../screens/Home/DetailScreen';
-import Header from '../components/Header/Header';
 import { GlobalStyles } from '../styles/structure';
 import {
   MaterialCommunityIcons,
@@ -15,15 +14,13 @@ import {
 import { Text } from 'react-native';
 
 /** Bottom Nav */
-
 const PrismaticsOverView = () => {
   const Tab = createBottomTabNavigator();
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: GlobalStyles.colors.white,
+        tabBarActiveTintColor: GlobalStyles.colors.slateBlue,
         tabBarInactiveTintColor: GlobalStyles.colors.lightSlateBlue,
-        tabBarActiveBackgroundColor: GlobalStyles.colors.slateBlue,
         tabBarStyle: {
           height: 70,
           backgroundColor: GlobalStyles.colors.lavender,
@@ -40,7 +37,15 @@ const PrismaticsOverView = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          header: () => <Header />,
+          // title: 'Prismatics',
+          headerTitle: 'Prismatics',
+          headerTitleAlign: 'left',
+          headerTitleStyle: {
+            fontFamily: 'Billabong',
+            fontSize: 35,
+          },
+
+          // header: Header,
           tabBarIcon: ({ focused, color, size }) => {
             const name = focused ? 'home' : 'home-outline';
             return (
@@ -82,11 +87,11 @@ const PrismaticsOverView = () => {
   );
 };
 
-const MainNavigator = ({navigation}) => {
+const MainNavigator = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
   return (
     <Stack.Navigator>
-        {/** Bottom Nav added as first screen in Stack*/}
+      {/** Bottom Nav added as first screen in Stack*/}
       <Stack.Screen
         name="PrismaticsOverView"
         options={{ headerShown: false }}

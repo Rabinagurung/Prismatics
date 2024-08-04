@@ -15,18 +15,22 @@ const WallpaperList = ({ searchQuery, navigation }) => {
   const fetchData = async () => {
     setIsLoadingNext(true);
     try {
-      const queryParam = searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''
-      const response = await fetch(`https://wallhaven.cc/api/v1/search?page=${currentPage}${queryParam}`);
+      const queryParam = searchQuery
+        ? `&q=${encodeURIComponent(searchQuery)}`
+        : '';
+      const response = await fetch(
+        `https://wallhaven.cc/api/v1/search?page=${currentPage}${queryParam}`
+      );
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      const data= await response.json();
-      const formattedData = data.data.map(item => ({
+      const data = await response.json();
+      const formattedData = data.data.map((item) => ({
         uri: item.thumbs.small,
         large: item.thumbs.large,
         id: item.id,
       }));
-      setData(prevData => [...prevData, ...formattedData]);
+      setData((prevData) => [...prevData, ...formattedData]);
     } catch (err) {
       setError(err);
     } finally {
@@ -46,7 +50,7 @@ const WallpaperList = ({ searchQuery, navigation }) => {
         columns={2}
         style={styles.listContainer}
         onEndReached={() => {
-          setCurrentPage(prevPage => prevPage + 1);
+          setCurrentPage((prevPage) => prevPage + 1);
           fetchData();
         }}
         refreshing={isLoadingNext}

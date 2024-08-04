@@ -8,15 +8,17 @@ export default function Header() {
       <View
         style={{
           // backgroundColor: 'red',
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+          marginHorizontal: 16,
+          backgroundColor: 'red',
         }}
       >
         <Text
           style={{
-            fontSize: 25,
-            fontWeight: '500',
-            color: GlobalStyles.colors.darkGray,
+            fontSize: 35,
+            fontFamily: 'Billabong',
+            color: GlobalStyles.colors.black,
           }}
         >
           Prismatics

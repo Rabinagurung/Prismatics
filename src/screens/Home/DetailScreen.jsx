@@ -1,39 +1,39 @@
-import { StyleSheet, View, Text, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
 import * as database from '../../database';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { GlobalStyles } from '../../styles/structure';
 import Loading from '../../components/UI/LoadingView';
+import { api } from '../../api/users';
+
+import { AuthContext } from '../../store/auth-context';
+import { Snackbar } from 'react-native-paper';
 
 export default function DetailScreen({ route }) {
+  const authCtx = useContext(AuthContext);
   const [showToolbar, setshowToolbar] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadedImageUri, setDownloadedImageUri] = useState(null);
   const [savingData, setSavingData] = useState(false);
   const [isFavourited, setIsFavourited] = useState(false);
+
   const { item } = route.params;
 
-  //Load favourites when the component is focused or item.id changes
-  useEffect(() => {
-    (async () => {
-      const favourites = await database.load();
-      const isFav = favourites.some(fav => fav.id_API === item.id);
-      setIsFavourited(isFav);
-    })()
-  }, [item.id])
+  //console.log('Received Item: ', item);
 
-  //Load favourites when the screen is in focus or item.id changes
+  // Load favourites when the screen is in focus or item.id changes
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       (async () => {
-        const favourites = await database.load();
-        const isFav = favourites.some(fav => fav.id_API === item.id);
-        setIsFavourited(isFav);
-      })()
-    }, [item.id])
+        try {
+          await api.isFavourite(authCtx.userId, item.id);
+          setIsFavourited(true);
+        } catch (_) {}
+      })();
+    }, [item.id, authCtx.userId])
   );
 
   const requestPermission = async () => {
@@ -44,11 +44,15 @@ export default function DetailScreen({ route }) {
   const downloadImage = async () => {
     const hasPermission = await requestPermission();
     if (!hasPermission) {
-      Alert.alert('Permission Denied', 'You need to grant media library permissions to save the image.');
+      Alert.alert(
+        'Permission Denied',
+        'You need to grant media library permissions to save the image.'
+      );
       return;
     }
 
     const image_URL = item.large;
+    //console.log(image_URL);
     const fileUri = FileSystem.documentDirectory + 'downloadedImage.jpg';
 
     const downloadResumable = FileSystem.createDownloadResumable(
@@ -57,6 +61,8 @@ export default function DetailScreen({ route }) {
       {},
       ({ totalBytesWritten, totalBytesExpectedToWrite }) => {
         const progress = totalBytesWritten / totalBytesExpectedToWrite;
+        //console.log(progress);
+
         setDownloadProgress(progress);
       }
     );
@@ -66,8 +72,28 @@ export default function DetailScreen({ route }) {
       setDownloadedImageUri(uri); // Save the URI to state
       // Save the image to the media library
       const asset = await MediaLibrary.createAssetAsync(uri);
+
       await MediaLibrary.createAlbumAsync('Download', asset, false);
-      Alert.alert('Success', 'Image Downloaded and Saved to Photos. You can set it as wallpaper now.');
+
+      const downloadData = {
+        id_API: item.id,
+        image_URL_large: item.large,
+        image_URL_small: item.uri,
+      };
+      try {
+        const response = await api.addUserDownloads(
+          authCtx.userId,
+          downloadData
+        );
+        console.log(response);
+      } catch (error) {
+        console.warn(error);
+      }
+
+      Alert.alert(
+        'Success',
+        'Image Downloaded and Saved to Photos. You can set it as wallpaper now.'
+      );
     } catch (e) {
       Alert.alert('Error', 'Image Download Failed.');
       console.error(e);
@@ -75,17 +101,21 @@ export default function DetailScreen({ route }) {
   };
 
   // When user clicked on the favourites button
-  const favouriteImage = async () => {
+  const favouriteHandler = async () => {
     setSavingData(true);
     if (isFavourited) {
       // Remove from favourites
-      const favourites = await database.load();
-      const favItem = favourites.find(fav => fav.id_API === item.id);
-      if (favItem) {
-        await database.remove(favItem.id);
-        setIsFavourited(false);
-        Alert.alert('Success', 'Image removed from your favourites!');
+      try {
+        await api.deleteUserFavourites(authCtx.userId, item.id);
+        setIsFavourited((prev) => !prev);
+      } catch (error) {
+        console.warn(error);
       }
+      await database.remove(authCtx.userId, item.id);
+      setIsFavourited(false);
+
+      Snackbar({});
+      Alert.alert('Success', 'Image removed from your favourites!');
     } else {
       // Add to favourites
       const data = {
@@ -93,13 +123,13 @@ export default function DetailScreen({ route }) {
         image_URL_large: item.large,
         image_URL_small: item.uri,
       };
-      const id = await database.save(data);
-      if (id) {
+
+      //add user fav documents in firestore databse
+      try {
+        await api.addUserFavourites(authCtx.userId, data);
         setIsFavourited(true);
         Alert.alert('Success', 'Image added to your favourites!');
-      } else {
-        Alert.alert('Failed', 'Image did not get added to your favourites.');
-      }
+      } catch (_) {}
     }
     setSavingData(false);
   };
@@ -111,7 +141,6 @@ export default function DetailScreen({ route }) {
       </View>
     );
   }
-
 
   return (
     <View style={styles.container}>
@@ -125,16 +154,20 @@ export default function DetailScreen({ route }) {
         <Image
           source={{ uri: item.large }}
           style={styles.image}
-          resizeMode="contain">
-        </Image>
+          resizeMode="contain"
+        ></Image>
       </TouchableOpacity>
       {showToolbar && (
         <View style={styles.toolbar}>
           <TouchableOpacity onPress={downloadImage}>
             <Icon name="download" size={30} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={favouriteImage}>
-            <Icon name="heart" size={30} color={isFavourited ? GlobalStyles.colors.dodgerBlue : "#fff"} />
+          <TouchableOpacity onPress={favouriteHandler}>
+            <Icon
+              name="heart"
+              size={30}
+              color={isFavourited ? GlobalStyles.colors.dodgerBlue : '#fff'}
+            />
           </TouchableOpacity>
         </View>
       )}

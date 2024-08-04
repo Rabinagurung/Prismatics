@@ -4,22 +4,22 @@ import SearchBar from '../../components/HomeOuput/SearchBar';
 import WallpaperList from '../../components/HomeOuput/WallpaperList';
 
 export default function SearchScreen({ route, navigation }) {
-  const [query, setQuery] = useState(route.params?.query || '')
-  navigation.setOptions({title: query ? `Search results for: ${query}`: "Search results"})
-  
+  const [query, setQuery] = useState(route.params?.query || '');
+  navigation.setOptions({
+    title: query ? `Search results for: ${query}` : 'Search results',
+  });
+
   useEffect(() => {
     if (route.params?.query) {
-      setQuery(route.params.query)
+      setQuery(route.params.query);
     }
-  }, [route.params?.query])
-
-
+  }, [route.params?.query]);
 
   return (
     <View style={styles.container}>
       <WallpaperList searchQuery={query} navigation={navigation} />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -32,5 +32,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 20,
-  }
-})
+  },
+});

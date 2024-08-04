@@ -1,11 +1,11 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import WallpaperList from './WallpaperList';
 
-export default function HomeOutput({navigation}) {
+export default function HomeOutput({ navigation }) {
   return (
-      <View style={styles.container}>
-        <WallpaperList navigation={navigation} />
-      </View>
+    <View style={styles.container}>
+      <WallpaperList navigation={navigation} />
+    </View>
   );
 }
 
