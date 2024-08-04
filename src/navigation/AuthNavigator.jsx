@@ -1,21 +1,26 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/Authorization/LoginScreen';
 import SignUpScreen from '../screens/Authorization/SignUpScreen';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import withBackground from '../components/UI/ImageBackground';
+
+const Stack = createNativeStackNavigator();
+
+const LoginScreenWithBackground = withBackground(LoginScreen);
+const SignUpScreenWithBackground = withBackground(SignUpScreen);
 
 export default function AuthNavigator() {
-  const Stack = createNativeStackNavigator();
-
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-      </Stack.Navigator>
-    </SafeAreaView>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Login"
+        component={LoginScreenWithBackground}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={SignUpScreenWithBackground}
+        options={{ presentation: 'modal', headerShown: false }}
+      />
+    </Stack.Navigator>
   );
 }

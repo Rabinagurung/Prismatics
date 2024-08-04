@@ -1,3 +1,4 @@
+import { onBackgroundMessage } from 'firebase/messaging/sw';
 import { StyleSheet } from 'react-native';
 import { MD3LightTheme as DefaultTheme } from 'react-native-paper';
 
@@ -36,5 +37,8 @@ export const paperTheme = {
     primary: GlobalStyles.colors.slateBlue,
     ...GlobalStyles.colors,
     outline: GlobalStyles.colors.lightGray,
+    onBackground: GlobalStyles.colors.lightGray,
+    surfaceDisabled: GlobalStyles.colors.lightSlateBlue,
+    onSurface: GlobalStyles.colors.darkGray,
   },
 };

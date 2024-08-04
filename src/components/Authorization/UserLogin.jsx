@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { TextInput, HelperText, Button } from 'react-native-paper';
 import AppLogo from '../UI/AppLogo';
-import UserInput from '../UI/UserInput';
 
 export default function UserLogin() {
   const [inputEmail, setEmail] = useState('');
@@ -12,9 +11,8 @@ export default function UserLogin() {
     email: '', //
     password: '', //
   });
-  // inputemail : rabina342@gmail.com
-  //input password: 123456789;
-  const handleLoginn = () => {
+
+  const handleLogin = () => {
     setErrors({ email: '', password: '' });
 
     if (!inputEmail.includes('@')) {
@@ -40,7 +38,7 @@ export default function UserLogin() {
   //   const hasErrors = inputEmail?.length > 3 && !inputEmail.includes('@');
   // const hasErrors = inputEmail?.length < 3 || !inputEmail.includes('@');
 
-  console.log(errors);
+  // console.log(errors);
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -93,19 +91,6 @@ export default function UserLogin() {
       >
         Login
       </Button>
-
-      {/* <TextInput
-        style={styles.inputText}
-        value={inputEmail}
-        onChangeText={setEmail}
-        placeholder="Email"
-      /> */}
-      {/* <TextInput
-        style={styles.inputText}
-        value={inputPassword}
-        onChangeText={inputPassword}
-        placeholder="Password"
-      /> */}
     </View>
   );
 }

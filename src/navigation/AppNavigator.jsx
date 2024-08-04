@@ -2,7 +2,8 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import { GlobalStyles } from '../styles/structure';
-import { useAuthentication } from '../components/Authorization/useAuthetication';
+import { useContext } from 'react';
+import { AuthContext } from '../store/auth-context';
 
 const theme = {
   ...DefaultTheme,
@@ -13,10 +14,11 @@ const theme = {
 };
 
 export default function AppNavigator() {
-  const user = useAuthentication();
+  const authCtx = useContext(AuthContext);
+
   return (
     <NavigationContainer theme={theme}>
-      {user ? <AuthNavigator /> : <MainNavigator />}
+      {!authCtx.isAuthenticated ? <AuthNavigator /> : <MainNavigator />}
     </NavigationContainer>
   );
 }

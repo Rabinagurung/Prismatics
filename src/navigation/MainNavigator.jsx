@@ -21,9 +21,8 @@ const PrismaticsOverView = () => {
     <>
       <Tab.Navigator
         screenOptions={{
-          tabBarActiveTintColor: GlobalStyles.colors.white,
+          tabBarActiveTintColor: GlobalStyles.colors.slateBlue,
           tabBarInactiveTintColor: GlobalStyles.colors.lightSlateBlue,
-          tabBarActiveBackgroundColor: GlobalStyles.colors.slateBlue,
           tabBarStyle: {
             height: 70,
             backgroundColor: GlobalStyles.colors.lavender,
@@ -32,7 +31,7 @@ const PrismaticsOverView = () => {
             height: 70,
           },
 
-          headerTintColor: GlobalStyles.colors.black,
+          headerTintColor: GlobalStyles.colors.darkGray,
           tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
         }}
       >
