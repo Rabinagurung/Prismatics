@@ -1,16 +1,19 @@
-import { StyleSheet, View } from 'react-native';
-import SearchBar from './SearchBar';
+import { StyleSheet, View, Text } from 'react-native';
 import WallpaperList from './WallpaperList';
 
-export default function HomeOutput() {
+export default function HomeOutput({navigation}) {
   return (
-    <View>
-      <SearchBar />
-      <WallpaperList />
-    </View>
+      <View style={styles.container}>
+        <WallpaperList navigation={navigation} />
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'white',
+  },
 });
