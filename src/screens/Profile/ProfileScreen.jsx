@@ -43,19 +43,22 @@ export default function ProfileScreen() {
     }, [userId])
   );
 
-
   const userFavData = async () => {
     try {
       const favDocuments = await api.getUserFavourites(userId);
-      
-      const favUserIdS = favDocuments.documents.map(
-        (item) => item.fields.id_API.stringValue
-      );
-     
-      const favPromises = favUserIdS.map((item) =>
-        api.deleteUserFavourites(userId, item)
-      );
-      
+
+      const favUserIdS =
+        favDocuments?.documents?.map(
+          (item) => item.fields.id_API.stringValue
+        ) ?? [];
+
+      const favPromises =
+        favUserIdS?.map((item) => api.deleteUserFavourites(userId, item)) ?? [];
+
+      if (favPromises.length === 0) {
+        return;
+      }
+
       return Promise.all(favPromises);
     } catch (error) {
       console.warn(error);
@@ -78,14 +81,19 @@ export default function ProfileScreen() {
     try {
       const downloadDocument = await api.getUserDownloads(userId);
 
-      const downloadUserIdS = downloadDocument.documents.map(
-        (item) => item.fields.id_API.stringValue
-      );
+      const downloadUserIdS =
+        downloadDocument?.documents?.map(
+          (item) => item.fields.id_API.stringValue
+        ) ?? [];
 
-      const downloadPromises = downloadUserIdS.map((item) =>
-        api.deleteUserDownloads(userId, item)
-      );
-      
+      const downloadPromises =
+        downloadUserIdS?.map((item) => api.deleteUserDownloads(userId, item)) ??
+        [];
+
+      if (downloadPromises.length === 0) {
+        return;
+      }
+
       return Promise.all(downloadPromises);
     } catch (error) {
       console.warn(error);
@@ -96,7 +104,6 @@ export default function ProfileScreen() {
     setIsLoading(true);
     try {
       const res = await userDownloadData();
-      console.log(res);
       setDownloads(0);
     } catch (error) {
       console.warn(error);
@@ -105,12 +112,10 @@ export default function ProfileScreen() {
     }
   };
 
-
   const resetAccount = () => {
     resolveDownloadPromises();
     resolveFavPromises();
   };
-
 
   const resetButtonHandler = () => {
     getAlert(
@@ -122,23 +127,19 @@ export default function ProfileScreen() {
     );
   };
 
-  //const favouritesData = await api.getUserFavourites(userId);
-
-  //console.log('Profile: ', favouritesData);
-
   const deleteUserAccountHandler = async () => {
-    console.log('Profile Screen:', userId);
-
+    setIsLoading(true);
+    let deletePromises = [
+      deleteUserAccount(token),
+      api.deleteUserDocument(userId),
+    ];
     try {
-      let deletePromises = [
-        deleteUserAccount(token),
-        api.deleteUserDocument(userId),
-      ];
-
       await Promise.all(deletePromises); //Delets the account in firebase and firestore database.
       authCtx.logout(); //Log out the user
     } catch (error) {
       console.warn(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -148,8 +149,7 @@ export default function ProfileScreen() {
       'Are you sure to delete the account?',
       'Delete',
       'destructive',
-
-      deleteUserAccountHandler()
+      deleteUserAccountHandler
     );
 
     // Alert.alert('DeleteAccount', '\n Are you sure to delete the account?', [

@@ -13,8 +13,6 @@ function getUrl(mode) {
 async function authenticate(mode, email, password) {
   const url = getUrl(mode);
 
-  console.log(url);
-
   try {
     const response = await axios.post(url, {
       email: email,

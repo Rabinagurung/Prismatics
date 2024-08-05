@@ -86,7 +86,7 @@ export default function DetailScreen({ route }) {
           authCtx.userId,
           downloadData
         );
-        console.log(response);
+        // console.log(response);
       } catch (error) {
         console.warn(error);
       }
@@ -103,7 +103,6 @@ export default function DetailScreen({ route }) {
 
   // When user clicked on the favourites button
   const favouriteHandler = async () => {
-    console.log('Favourite Handler');
     setSavingData(true);
     if (isFavourited) {
       // Remove from favourites
