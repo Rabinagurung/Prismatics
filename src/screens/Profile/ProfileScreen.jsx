@@ -187,7 +187,7 @@ export default function ProfileScreen() {
 
   return (
     <ImageBackground
-      src={require(`../../../assets/background.png`)}
+      //src={require(`../../../assets/background.png`)}
       style={styles.imageBackground}
     >
       <View style={styles.container}>

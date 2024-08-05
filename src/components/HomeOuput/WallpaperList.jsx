@@ -19,10 +19,10 @@ const WallpaperList = ({ searchQuery, navigation }) => {
         ? `&q=${encodeURIComponent(searchQuery)}`
         : '';
 
-      const queryParam_2 = `&categories=111&purity=100&sorting=random&ratios=9x16,10x16&resolutions=1080x1920,720x1280,1440x2560&per_page=10`;
+      //const queryParam_2 = `&categories=111&purity=100&sorting=random&ratios=9x16,10x16&resolutions=1080x1920,720x1280,1440x2560&per_page=10`;
 
       const response = await fetch(
-        `https://wallhaven.cc/api/v1/search?page=${currentPage}${queryParam_2}${queryParam}`
+        `https://wallhaven.cc/api/v1/search?page=${currentPage}${queryParam}`
       );
 
       if (!response.ok) {
