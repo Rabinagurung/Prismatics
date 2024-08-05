@@ -68,6 +68,11 @@ const PrismaticsOverView = () => {
           tabBarLabel: ({ color, children }) => (
             <Text style={{ marginBottom: 20, color }}>{children}</Text>
           ),
+          headerTitle: "Prismatics",
+          headerTitleStyle: {
+            fontFamily: 'Billabong',
+            fontSize: 35,
+          },
         }}
       />
       <Tab.Screen
@@ -81,6 +86,11 @@ const PrismaticsOverView = () => {
           tabBarLabel: ({ color, children }) => (
             <Text style={{ marginBottom: 20, color }}>{children}</Text>
           ),
+          headerTitle: "Prismatics",
+          headerTitleStyle: {
+            fontFamily: 'Billabong',
+            fontSize: 35,
+          },
         }}
       />
     </Tab.Navigator>
