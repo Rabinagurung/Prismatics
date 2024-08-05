@@ -1,18 +1,23 @@
-import { StyleSheet, View, Image, TouchableOpacity, Alert } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Alert,
+  ImageBackground,
+  Pressable,
+} from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
-import * as database from '../../database';
 import React, { useCallback, useContext, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { GlobalStyles } from '../../styles/structure';
 import Loading from '../../components/UI/LoadingView';
 import { api } from '../../api/users';
-
 import { AuthContext } from '../../store/auth-context';
-import { Snackbar } from 'react-native-paper';
+import BackButton from '../../components/UI/BackButton';
 
 export default function DetailScreen({ route }) {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const authCtx = useContext(AuthContext);
   const [showToolbar, setshowToolbar] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
@@ -21,8 +26,6 @@ export default function DetailScreen({ route }) {
   const [isFavourited, setIsFavourited] = useState(false);
 
   const { item } = route.params;
-
-  //console.log('Received Item: ', item);
 
   // Load favourites when the screen is in focus or item.id changes
   useFocusEffect(
@@ -52,7 +55,6 @@ export default function DetailScreen({ route }) {
     }
 
     const image_URL = item.large;
-    //console.log(image_URL);
     const fileUri = FileSystem.documentDirectory + 'downloadedImage.jpg';
 
     const downloadResumable = FileSystem.createDownloadResumable(
@@ -61,7 +63,6 @@ export default function DetailScreen({ route }) {
       {},
       ({ totalBytesWritten, totalBytesExpectedToWrite }) => {
         const progress = totalBytesWritten / totalBytesExpectedToWrite;
-        //console.log(progress);
 
         setDownloadProgress(progress);
       }
@@ -85,7 +86,7 @@ export default function DetailScreen({ route }) {
           authCtx.userId,
           downloadData
         );
-        console.log(response);
+        // console.log(response);
       } catch (error) {
         console.warn(error);
       }
@@ -111,10 +112,8 @@ export default function DetailScreen({ route }) {
       } catch (error) {
         console.warn(error);
       }
-      await database.remove(authCtx.userId, item.id);
       setIsFavourited(false);
 
-      Snackbar({});
       Alert.alert('Success', 'Image removed from your favourites!');
     } else {
       // Add to favourites
@@ -134,57 +133,50 @@ export default function DetailScreen({ route }) {
     setSavingData(false);
   };
 
-  if (savingData) {
-    return (
-      <View style={styles.imageContainer}>
-        <Loading />
-      </View>
-    );
-  }
-
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.imageContainer}
-        onPress={() => {
-          setshowToolbar(!showToolbar);
-        }}
-        activeOpacity={1}
-      >
-        <Image
-          source={{ uri: item.large }}
-          style={styles.image}
-          resizeMode="contain"
-        ></Image>
-      </TouchableOpacity>
-      {showToolbar && (
-        <View style={styles.toolbar}>
-          <TouchableOpacity onPress={downloadImage}>
-            <Icon name="download" size={30} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={favouriteHandler}>
-            <Icon
-              name="heart"
-              size={30}
-              color={isFavourited ? GlobalStyles.colors.dodgerBlue : '#fff'}
-            />
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+    <ImageBackground
+      resizeMode="cover"
+      onLoadStart={() => setIsImageLoaded(true)}
+      onLoadEnd={() => setIsImageLoaded(false)}
+      style={styles.container}
+      source={{ uri: item.large }}
+      onPress={() => {
+        setshowToolbar(!showToolbar);
+      }}
+    >
+      <BackButton />
+      {savingData && <Loading />}
+      {isImageLoaded && <Loading />}
+      <Pressable style={styles.imageContainer} activeOpacity={1}></Pressable>
+
+      {/* {showToolbar && ( */}
+      <View style={styles.toolbar}>
+        <Pressable
+          style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+          onPress={downloadImage}
+        >
+          <Icon name="download" size={30} color="#fff" />
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+          onPress={favouriteHandler}
+        >
+          <Icon
+            name="heart"
+            size={30}
+            color={isFavourited ? GlobalStyles.colors.dodgerBlue : '#fff'}
+          />
+        </Pressable>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'darkgray',
   },
-  imageContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
   image: {
     width: '100%',
     height: '100%',
@@ -195,7 +187,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     height: 50,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',

@@ -28,7 +28,7 @@ const PrismaticsOverView = () => {
         tabBarItemStyle: {
           height: 70,
         },
-
+        headerShadowVisible: false,
         headerTintColor: GlobalStyles.colors.black,
         tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
       }}
@@ -99,8 +99,20 @@ const MainNavigator = ({ navigation }) => {
       />
 
       {/** Here, we will add all the screens */}
-      <Stack.Screen name="SearchScreen" component={SearchScreen} />
-      <Stack.Screen name="DetailScreen" component={DetailScreen} />
+      <Stack.Screen
+        name="SearchScreen"
+        component={SearchScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="DetailScreen"
+        component={DetailScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };
