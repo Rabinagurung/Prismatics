@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View, TextInput, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { GlobalStyles } from '../../styles/structure';
 
 export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,10 +21,16 @@ export default function SearchBar() {
 
   return (
     <View style={styles.container}>
-      <Ionicons name="search" size={24} color="black" style={styles.icon} />
+      <Ionicons
+        name="search-sharp"
+        size={18}
+        color={GlobalStyles.colors.darkGray}
+        style={styles.icon}
+      />
       <TextInput
         style={styles.input}
         placeholder="Search"
+        placeholderTextColor={GlobalStyles.colors.darkGray}
         value={searchQuery}
         onChangeText={(text) => setSearchQuery(text)}
         onSubmitEditing={handleSearchSubmit}
@@ -47,6 +54,9 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 18,
+    placeholderTextColor: 'red',
   },
 });
+
+

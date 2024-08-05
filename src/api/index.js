@@ -28,6 +28,7 @@ axios.interceptors.response.use(
   (response) => response.data,
   async (error) => {
     const originalRequest = error.config;
+    console.log(error);
     // console.log('Before retry');
     if (error.response.status === 401 && !originalRequest._retry) {
       //console.log('Called here');
@@ -43,6 +44,7 @@ axios.interceptors.response.use(
         return axios(originalRequest);
       }
     }
+
     return Promise.reject(error);
   }
 );

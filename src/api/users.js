@@ -55,12 +55,20 @@ export const api = {
       },
     };
 
-    //console.log('Users: ', userId, data); 
+    //console.log('Users: ', userId, data);
 
     return axios.patch(`/users/${userId}/downloads/${id_API}`, data);
   },
   //get user Downloads
   getUserDownloads: (userId) => {
     return axios.get(`/users/${userId}/downloads`);
+  },
+
+  deleteUserDownloads: (userId, deleteId) => {
+    return axios.delete(`/users/${userId}/downloads/${deleteId}`);
+  },
+
+  deleteUserDocument: (userId) => {
+    return axios.delete(`/users/${userId}`);
   },
 };

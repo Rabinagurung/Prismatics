@@ -14,10 +14,15 @@ export default function FavoriteScreen({ navigation }) {
   const userId = authCtx.userId;
 
   //Add favourite list
+
+  // useFocusEffect(); 
+
   const fetchFavourites = useCallback(async () => {
     setLoading(true);
     try {
       const loadedFavouritesData = await api.getUserFavourites(userId);
+
+      console.log(loadedFavouritesData);
 
       const formattedData = loadedFavouritesData.documents.map((item) => {
         return {
@@ -36,13 +41,12 @@ export default function FavoriteScreen({ navigation }) {
 
   //Load favourites list whenever the screen is in focus
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       fetchFavourites();
     }, [fetchFavourites])
   );
 
   const handleItemPress = (item) => {
-    //console.log('Items from Favourite screen to Detail Screen: ', item);
     navigation.navigate('DetailScreen', { item });
   };
 

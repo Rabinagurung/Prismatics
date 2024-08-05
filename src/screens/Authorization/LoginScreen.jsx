@@ -50,6 +50,7 @@ export default function LoginScreen({ navigation }) {
 
       authCtx.authenticate(token, userId, refreshToken);
     } catch (_) {
+      // console.log(error);
       Alert.alert('Login Failed', 'Invalid email or password');
     }
   };

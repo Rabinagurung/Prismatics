@@ -5,9 +5,15 @@ import { Alert } from 'react-native';
 
 const API_KEY = 'AIzaSyBm-aChIRjdykc9L7rRp7VoIjPJl_Ykr20';
 
+function getUrl(mode) {
+  return `https://identitytoolkit.googleapis.com/v1/accounts:${mode}?key=${API_KEY}`;
+}
+
 //To send the reuqest to firebase for signInUser and signUpUser.
 async function authenticate(mode, email, password) {
-  const url = `https://identitytoolkit.googleapis.com/v1/accounts:${mode}?key=${API_KEY}`;
+  const url = getUrl(mode);
+
+  console.log(url);
 
   try {
     const response = await axios.post(url, {
@@ -36,8 +42,9 @@ async function authenticate(mode, email, password) {
 
     //console.log(authData);
     return authData;
-  } catch (error) {
-    console.warn(error);
+  } catch (_) {
+    //throw new Error(error);
+    //console.warn(error);
   }
 }
 
@@ -48,6 +55,27 @@ export function signUpUser(email, password) {
 export function loginUser(email, password) {
   return authenticate('signInWithPassword', email, password);
 }
+
+//Error
+export async function deleteUserAccount(token) {
+  console.log('Auth: ', token);
+  const url = getUrl('delete');
+
+  try {
+    const res = await axios.post(
+      `https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`,
+      {
+        idToken: token,
+      }
+    );
+    return res.data;
+  } catch (error) {
+    //throw new Error(error);
+    //console.warn(JSON.stringify(error));
+  }
+}
+
+export async function resetUserAccount(userId) {}
 
 export async function updateRefreshToken(refreshToken) {
   const url = 'https://securetoken.googleapis.com/v1/token?key=';
