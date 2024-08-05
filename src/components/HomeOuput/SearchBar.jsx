@@ -12,7 +12,6 @@ export default function SearchBar() {
     if (searchQuery.trim()) {
       navigation.navigate('SearchScreen', {
         query: searchQuery,
-        navigation: navigation,
       });
     } else {
       Alert.alert('Search', 'Please enter a search term.');
@@ -58,5 +57,3 @@ const styles = StyleSheet.create({
     placeholderTextColor: 'red',
   },
 });
-
-

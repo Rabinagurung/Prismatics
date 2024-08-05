@@ -1,10 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import React, { useCallback, useContext, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import MasonryList from 'react-native-masonry-list';
 import Loading from '../../components/UI/LoadingView';
 import { api } from '../../api/users';
 import { AuthContext } from '../../store/auth-context';
+import WallListItem from '../../components/HomeOuput/WallpaperListItem';
+import MasonryList from '@react-native-seoul/masonry-list';
 
 export default function FavoriteScreen({ navigation }) {
   const [data, setData] = useState([]);
@@ -14,15 +15,10 @@ export default function FavoriteScreen({ navigation }) {
   const userId = authCtx.userId;
 
   //Add favourite list
-
-  // useFocusEffect(); 
-
   const fetchFavourites = useCallback(async () => {
     setLoading(true);
     try {
       const loadedFavouritesData = await api.getUserFavourites(userId);
-
-      console.log(loadedFavouritesData);
 
       const formattedData = loadedFavouritesData.documents.map((item) => {
         return {
@@ -41,14 +37,10 @@ export default function FavoriteScreen({ navigation }) {
 
   //Load favourites list whenever the screen is in focus
   useFocusEffect(
-    useCallback(() => {
+    React.useCallback(() => {
       fetchFavourites();
     }, [fetchFavourites])
   );
-
-  const handleItemPress = (item) => {
-    navigation.navigate('DetailScreen', { item });
-  };
 
   if (loading) {
     return <Loading />;
@@ -56,10 +48,12 @@ export default function FavoriteScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <MasonryList
-        images={data}
-        onPressImage={handleItemPress}
-        columns={2}
+        data={data}
+        numColumns={2}
         style={styles.listContainer}
+        renderItem={({ item }) => (
+          <WallListItem item={item} navigation={navigation} />
+        )}
       />
     </View>
   );

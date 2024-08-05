@@ -1,54 +1,65 @@
 import { StyleSheet, View } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import MasonryList from 'react-native-masonry-list';
+import React, { useCallback, useEffect, useState } from 'react';
+import MasonryList from '@react-native-seoul/masonry-list';
+import WallListItem from './WallpaperListItem';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const WallpaperList = ({ searchQuery, navigation }) => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingNext, setIsLoadingNext] = useState(false);
+  const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    fetchData();
-  }, [searchQuery, currentPage]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoadingNext(true);
+
     try {
       const queryParam = searchQuery
         ? `&q=${encodeURIComponent(searchQuery)}`
         : '';
+
+      const queryParam_2 = `&categories=111&purity=100&sorting=random&ratios=9x16,10x16&resolutions=1080x1920,720x1280,1440x2560&per_page=10`;
+
       const response = await fetch(
-        `https://wallhaven.cc/api/v1/search?page=${currentPage}${queryParam}`
+        `https://wallhaven.cc/api/v1/search?page=${currentPage}${queryParam_2}${queryParam}`
       );
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
+
       const formattedData = data.data.map((item) => ({
         uri: item.thumbs.small,
-        large: item.thumbs.large,
+        large: item.path,
         id: item.id,
       }));
       setData((prevData) => [...prevData, ...formattedData]);
     } catch (err) {
+      console.log(err);
       setError(err);
     } finally {
       setIsLoadingNext(false);
     }
-  };
+  }, [currentPage, searchQuery]);
 
-  const handleItemPress = (item) => {
-    navigation.navigate('DetailScreen', { item });
-  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <View style={styles.container}>
       <MasonryList
-        images={data}
-        onPressImage={handleItemPress}
-        columns={2}
-        style={styles.listContainer}
+        data={data}
+        numColumns={2}
+        style={[
+          styles.listContainer,
+          { marginTop: searchQuery ? insets.top : 0 },
+        ]}
+        renderItem={({ item }) => (
+          <WallListItem item={item} navigation={navigation} />
+        )}
         onEndReached={() => {
           setCurrentPage((prevPage) => prevPage + 1);
           fetchData();
@@ -71,16 +82,8 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
+    marginTop: 90,
     backgroundColor: 'white',
-  },
-  imageContainer: {
-    margin: 5,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  image: {
-    width: '100%',
-    height: 200,
   },
 });
 
