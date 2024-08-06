@@ -1,5 +1,5 @@
-Prismatics
-# Prismatics: The Ultimate Wallpaper App
+# Prismatics
+**Prismatics: The Ultimate Wallpaper App**
 
 ## Introduction
 
