@@ -29,9 +29,13 @@ Prismatics
 **Firestore Database:** All your favorites and user data are stored in Firestore, providing real-time updates and ensuring your information is always up-to-date.
 
 ## Technology Stack
+
 **React Native:** A powerful framework for building cross-platform mobile applications.
+
 **Wallhaven API:** Source for high-quality wallpaper images.
+
 **Firebase Authentication:** Secure user authentication and management.
+
 **Firestore:** Real-time database for storing user data and favorites.
 
 **Prismatics** aims to enhance your device's aesthetics with the highest quality wallpapers, making your phone truly reflect your style.
