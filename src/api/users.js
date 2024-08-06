@@ -27,7 +27,6 @@ export const api = {
       },
     };
 
-    //console.log(userId, data);
     return axios.patch(`/users/${userId}/favourites/${id_API}`, data);
   },
 
@@ -54,8 +53,6 @@ export const api = {
         image_URL_small: { stringValue: image_URL_small },
       },
     };
-
-    //console.log('Users: ', userId, data);
 
     return axios.patch(`/users/${userId}/downloads/${id_API}`, data);
   },

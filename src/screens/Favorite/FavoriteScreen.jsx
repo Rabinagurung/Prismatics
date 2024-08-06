@@ -14,16 +14,13 @@ export default function FavoriteScreen({ navigation }) {
 
   const userId = authCtx.userId;
 
-  console.log(data);
   //Add favourite list
   useFocusEffect(
     useCallback(() => {
       (async () => {
         setLoading(true);
-        console.log('Check');
         try {
           const loadedFavouritesData = await api.getUserFavourites(userId);
-          console.log('dcd', loadedFavouritesData?.documents?.length);
           const formattedData =
             loadedFavouritesData?.documents?.map((item) => {
               return {
@@ -33,7 +30,6 @@ export default function FavoriteScreen({ navigation }) {
               };
             }) ?? [];
 
-          console.log(formattedData);
           setData(formattedData);
         } catch (err) {
           console.warn(err);
@@ -43,33 +39,6 @@ export default function FavoriteScreen({ navigation }) {
       })();
     }, [userId])
   );
-
-  // const fetchFavourites = useCallback(async () => {
-  //   setLoading(true);
-  //   try {
-  //     const loadedFavouritesData = await api.getUserFavourites(userId);
-  //     console.log('dcd', loadedFavouritesData.documents.length);
-  //     const formattedData = loadedFavouritesData.documents.map((item) => {
-  //       return {
-  //         id: item.fields.id_API.stringValue,
-  //         large: item.fields.image_URL_large.stringValue,
-  //         uri: item.fields.image_URL_small.stringValue,
-  //       };
-  //     });
-
-  //     setData(formattedData);
-  //   } catch (_) {
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, [userId]);
-
-  //Load favourites list whenever the screen is in focus
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     fetchFavourites();
-  //   }, [fetchFavourites])
-  // );
 
   if (loading) {
     return <Loading />;

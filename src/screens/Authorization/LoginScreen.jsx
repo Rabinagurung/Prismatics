@@ -9,9 +9,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import LottieView from 'lottie-react-native';
-import { TextInput } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LogBox } from 'react-native';
 
 const schema = z.object({
   email: z
@@ -23,14 +21,9 @@ const schema = z.object({
     .min(8, { message: 'Password should be at least 8 characters long.' }),
 });
 
-LogBox.ignoreLogs([
-  'TextInput.Icon: Support for defaultProps will be removed from function components in a future major release. Use JavaScript default parameters instead.',
-]);
-
 export default function LoginScreen({ navigation }) {
   const authCtx = useContext(AuthContext);
   const insets = useSafeAreaInsets();
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const {
     control,
@@ -98,18 +91,10 @@ export default function LoginScreen({ navigation }) {
               mode="outlined"
               value={value}
               onBlur={onBlur}
+              secureTextEntry
               error={errors.password}
-              secureTextEntry={secureTextEntry}
               onChangeText={onChange}
               visible={!!errors.password}
-              right={
-                <TextInput.Icon
-                  icon={secureTextEntry ? 'eye-off' : 'eye'}
-                  onPress={() => {
-                    setSecureTextEntry(!secureTextEntry);
-                  }}
-                />
-              }
             />
           )}
           name="password"

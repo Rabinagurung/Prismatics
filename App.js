@@ -44,8 +44,6 @@ function Root() {
     })();
   }, [authCtx]);
 
-  // console.log(isAppReady);
-
   const onLayoutRootView = useCallback(async () => {
     if (isAppReady) {
       // await SplashScreen.hideAsync();

@@ -1,6 +1,6 @@
 import { Alert, StyleSheet, View } from 'react-native';
 import UserInput from '../../components/UI/UserInput';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import ContainedButton from '../../components/UI/ContainedButton';
 import TextButton from '../../components/UI/TextButtton';
 import { signUpUser } from '../../utils/auth';
@@ -11,7 +11,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LottieView from 'lottie-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TextInput } from 'react-native-paper';
 
 const schema = z
   .object({
@@ -35,8 +34,6 @@ const schema = z
 export default function SignUpScreen({ navigation }) {
   const authCtx = useContext(AuthContext);
   const insets = useSafeAreaInsets();
-
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
 
   const {
     control,
@@ -128,21 +125,13 @@ export default function SignUpScreen({ navigation }) {
             <UserInput
               label="Password"
               mode="outlined"
-              secureTextEntry={secureTextEntry}
               value={value}
               onBlur={onBlur}
               error={errors.password}
+              secureTextEntry
               onChangeText={onChange}
               visible={!!errors.password}
               style={{ width: '100%' }}
-              right={
-                <TextInput.Icon
-                  icon={secureTextEntry ? 'eye-off' : 'eye'}
-                  onPress={() => {
-                    setSecureTextEntry(!secureTextEntry);
-                  }}
-                />
-              }
             />
           )}
           name="password"
@@ -156,21 +145,13 @@ export default function SignUpScreen({ navigation }) {
             <UserInput
               label="Confirm Password"
               mode="outlined"
-              secureTextEntry={secureTextEntry}
               value={value}
               error={errors.confirmPassword}
               onBlur={onBlur}
+              secureTextEntry
               onChangeText={onChange}
               visible={!!errors.confirmPassword}
               style={{ width: '100%' }}
-              right={
-                <TextInput.Icon
-                  icon={secureTextEntry ? 'eye-off' : 'eye'}
-                  onPress={() => {
-                    setSecureTextEntry(!secureTextEntry);
-                  }}
-                />
-              }
             />
           )}
           name="confirmPassword"
