@@ -31,19 +31,8 @@ async function authenticate(mode, email, password) {
       registered: response.data.registered,
     };
 
-    // console.log(
-    //   'Response',
-    //   authData.token.length,
-    //   authData.userId,
-    //   authData.refreshToken
-    // );
-
-    //console.log(authData);
     return authData;
-  } catch (_) {
-    //throw new Error(error);
-    //console.warn(error);
-  }
+  } catch (_) {}
 }
 
 export function signUpUser(email, password) {
@@ -56,9 +45,6 @@ export function loginUser(email, password) {
 
 //Error
 export async function deleteUserAccount(token) {
-  console.log('Auth: ', token);
-  const url = getUrl('delete');
-
   try {
     const res = await axios.post(
       `https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`,
