@@ -189,7 +189,7 @@ export default function SignUpScreen({ navigation }) {
       <View style={styles.textButtonContainer}>
         <TextButton
           text="Already have an account? "
-          title="Login In"
+          title="Login here"
           onPress={() => navigation.pop()}
         />
       </View>
