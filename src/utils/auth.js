@@ -45,18 +45,12 @@ export function loginUser(email, password) {
 
 //Error
 export async function deleteUserAccount(token) {
-  try {
-    const res = await axios.post(
-      `https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`,
-      {
-        idToken: token,
-      }
-    );
-    return res.data;
-  } catch (error) {
-    //throw new Error(error);
-    //console.warn(JSON.stringify(error));
-  }
+  return axios.post(
+    `https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${API_KEY}`,
+    {
+      idToken: token,
+    }
+  );
 }
 
 export async function resetUserAccount(userId) {}

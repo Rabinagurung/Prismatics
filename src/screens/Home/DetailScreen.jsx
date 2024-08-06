@@ -4,6 +4,7 @@ import {
   Alert,
   ImageBackground,
   Pressable,
+  Dimensions,
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
@@ -15,13 +16,14 @@ import Loading from '../../components/UI/LoadingView';
 import { api } from '../../api/users';
 import { AuthContext } from '../../store/auth-context';
 import BackButton from '../../components/UI/BackButton';
+import { ProgressBar } from 'react-native-paper';
 
+const { height } = Dimensions.get('screen');
 export default function DetailScreen({ route }) {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const authCtx = useContext(AuthContext);
   const [showToolbar, setshowToolbar] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
-  const [downloadedImageUri, setDownloadedImageUri] = useState(null);
   const [savingData, setSavingData] = useState(false);
   const [isFavourited, setIsFavourited] = useState(false);
 
@@ -70,7 +72,6 @@ export default function DetailScreen({ route }) {
 
     try {
       const { uri } = await downloadResumable.downloadAsync();
-      setDownloadedImageUri(uri); // Save the URI to state
       // Save the image to the media library
       const asset = await MediaLibrary.createAssetAsync(uri);
 
@@ -93,7 +94,12 @@ export default function DetailScreen({ route }) {
 
       Alert.alert(
         'Success',
-        'Image Downloaded and Saved to Photos. You can set it as wallpaper now.'
+        'Image Downloaded and Saved to Photos. You can set it as wallpaper now.',
+        [
+          {
+            onPress: () => setDownloadProgress(0),
+          },
+        ]
       );
     } catch (e) {
       Alert.alert('Error', 'Image Download Failed.');
@@ -147,7 +153,14 @@ export default function DetailScreen({ route }) {
       <BackButton />
       {savingData && <Loading />}
       {isImageLoaded && <Loading />}
-      <Pressable style={styles.imageContainer} activeOpacity={1}></Pressable>
+      {downloadProgress > 0 && (
+        <View style={{ marginTop: height / 2 }}>
+          <ProgressBar
+            progress={downloadProgress}
+            color={GlobalStyles.colors.slateBlue}
+          />
+        </View>
+      )}
 
       {/* {showToolbar && ( */}
       <View style={styles.toolbar}>
@@ -177,17 +190,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  image: {
-    width: '100%',
-    height: '100%',
-    marginBottom: 20,
-  },
   toolbar: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
     height: 50,
-    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
